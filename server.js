@@ -24,6 +24,30 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+// custom time API endpoint... 
+app.get("/api/:date?", function (req, res) {
+  let dateString = req.params.date;
+
+  if(!req.params.date){
+    let dateInt = parseInt(Date.now())
+    return res.json({ unix: Number(Date.now()), utc: new Date(dateInt).toUTCString() });
+  }
+
+  if (/\d{5,}/.test(dateString)) {
+    let dateInt = parseInt(dateString);
+    
+    res.json({ unix: Number(dateString), utc: new Date(dateInt).toUTCString() });
+  } else {
+    let dateObject = new Date(dateString);
+
+    if (dateObject.toString() === "Invalid Date") {
+      res.json({ error: "Invalid Date" });
+    } else {
+      res.json({ unix: dateObject.valueOf(), utc: dateObject.toUTCString() });
+    }
+  }
+});
+
 
 
 // listen for requests :)
